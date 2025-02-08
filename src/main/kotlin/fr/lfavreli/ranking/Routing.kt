@@ -19,7 +19,6 @@ fun Application.configureRouting() {
         post("/addItem") {
             val request = call.receive<ItemRequest>()
             dynamoDBService.putItem("Player", request.id, request.data)
-            //dynamoDBService.putItem("Player", "1", "insert")
             call.respondText("Élément ajouté !")
         }
     }
