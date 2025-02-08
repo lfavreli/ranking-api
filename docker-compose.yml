@@ -7,7 +7,7 @@ services:
       command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
       image: "amazon/dynamodb-local:latest"
       container_name: dynamodb-local
-      user: root
+      user: root # Requires root user to avoid ‘unable to open database file’ error when using Volume
       ports:
         - "8000:8000"
       volumes:
