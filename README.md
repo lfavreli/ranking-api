@@ -1,3 +1,17 @@
+## Prerequisite
+
+- Docker must be install
+- The Docker `dynamodb` volume must be created
+
+```bash
+$ docker volume create dynamodb
+```
+
+### Content Negotiation
+
+- Add JSON content negotiation to handle incoming requests with JSON MIME types
+- Add JSON serialization to handle incoming request data
+
 ## Development
 
 ### Auto-Relaod
