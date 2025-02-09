@@ -1,3 +1,16 @@
+# API Ranking
+
+
+## Requirements
+
+- High availability
+- Real-time player activity and metrics
+- Low latency aggregations and joins
+- Scalability to millions of players and thousands of concurrent users
+- Reliability
+- Minimal operational overhead : focus on game development, not infrastructure
+- Fraud and anomaly detection
+
 ## Prerequisite
 
 - Docker must be install
@@ -33,7 +46,10 @@ $ gradlew -t build -x test -i
 ```bash
 $ ./gradlew build -Pdevelopment=false
 ```
+## Resources
 
+- [Scaling Real-time Gaming Leaderboards for Millions of Players](https://www.youtube.com/watch?v=HAb-tWI8oVk)
+- [Designing a Realtime Gaming Leaderboard - Horizontally Scalable and Highly Available](https://www.youtube.com/watch?v=UerkzwZ_zSY)
 
 ---
 
