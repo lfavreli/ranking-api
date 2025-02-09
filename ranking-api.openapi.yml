@@ -1,0 +1,509 @@
+openapi: 3.0.3
+info:
+  title: Ranking API
+  description: >
+    This API manages players, tournaments, and leaderboards.
+    It supports operations for listing, creating, and updating players and tournaments,
+    retrieving leaderboards, updating scores, and fetching nearby players.
+  version: "1.0.0"
+  contact:
+    email: loic.favreliere@leafage.co
+externalDocs:
+  description: Find out more about Ranking API
+  url: https://github.com/lfavreli/ranking-api
+servers:
+  - url: http://localhost:8080/api/ranking/v1
+tags:
+  - name: Player
+    description: Operations about Players
+  - name: Tournament
+    description: Everything about Tournaments
+paths:
+  /players:
+    get:
+      tags:
+        - Player
+      summary: List Players
+      description: Retrieve a list of all players.
+      responses:
+        '200':
+          description: A list of players.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Player'
+    post:
+      tags:
+        - Player
+      summary: Create Player
+      description: Add a new player.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                displayName:
+                  type: string
+                  example: "Alice"
+              required:
+                - displayName
+      responses:
+        '201':
+          description: Player created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+  /players/{playerId}:
+    get:
+      tags:
+        - Player
+      summary: Retrieve Player
+      description: Get a player by their identifier.
+      parameters:
+        - name: playerId
+          in: path
+          description: The unique identifier of the player.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player details retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+    put:
+      tags:
+        - Player
+      summary: Update Player
+      description: Update an existing player's information. (Not yet implemented)
+      parameters:
+        - name: playerId
+          in: path
+          description: The unique identifier of the player.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Player data to update.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Player'
+      responses:
+        '200':
+          description: Updated player details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '501':
+          description: Not implemented.
+  /tournaments:
+    get:
+      tags:
+        - Tournament
+      summary: List Tournaments
+      description: Retrieve a list of all tournaments.
+      responses:
+        '200':
+          description: A list of tournaments.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tournament'
+    post:
+      tags:
+        - Tournament
+      summary: Create Tournament
+      description: Create a new tournament.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                  example: "Tournament 1"
+                order:
+                  type: string
+                  enum:
+                    - LARGER_IS_BETTER
+                    - SMALLER_IS_BETTER
+                  example: LARGER_IS_BETTER
+              required:
+                - description
+                - order
+      responses:
+        '201':
+          description: Tournament created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tournament'
+  /tournaments/{tournamentId}:
+    get:
+      tags:
+        - Tournament
+      summary: Retrieve Tournament
+      description: Get a tournament by its identifier.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tournament details retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tournament'
+    delete:
+      tags:
+        - Tournament
+      summary: Delete Tournament
+      description: Delete a tournament.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tournament deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tournamentId:
+                    type: string
+                  message:
+                    type: string
+                    example: "Tournament deleted"
+  /tournaments/{tournamentId}/leaderboard:
+    get:
+      tags:
+        - Tournament
+      summary: Retrieve Leaderboard
+      description: Get the complete leaderboard for a tournament.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Leaderboard retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tournamentId:
+                    type: string
+                  leaderboard:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LeaderboardEntry'
+  /tournaments/{tournamentId}/leaderboard/top:
+    get:
+      tags:
+        - Tournament
+      summary: Retrieve Top Players
+      description: Get the top players from the tournament leaderboard.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+        - name: number
+          in: query
+          description: The number of top players to retrieve.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Top players retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tournamentId:
+                    type: string
+                  topPlayers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        playerId:
+                          type: string
+                        displayName:
+                          type: string
+                        score:
+                          type: integer
+  /tournaments/{tournamentId}/players:
+    get:
+      tags:
+        - Tournament
+      summary: List Tournament Players
+      description: Retrieve all players registered in a tournament.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tournament players retrieved.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tournamentId:
+                    type: string
+                  players:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TournamentPlayer'
+    delete:
+      tags:
+        - Tournament
+      summary: Delete All Tournament Players
+      description: Remove all players from the specified tournament.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: All players have been removed from the tournament.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tournament'
+  /tournaments/{tournamentId}/players/{playerId}/score:
+    patch:
+      tags:
+        - Tournament
+      summary: Update Player Score
+      description: Update the score for a player in a tournament.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+        - name: playerId
+          in: path
+          description: The unique identifier of the player.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: New score to be set.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newScore:
+                  type: integer
+                  example: 1600
+              required:
+                - newScore
+      responses:
+        '200':
+          description: Score updated successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  playerId:
+                    type: string
+                  displayName:
+                    type: string
+                  score:
+                    type: integer
+                  rank:
+                    type: integer
+  /tournaments/{tournamentId}/players/{playerId}/nearby:
+    get:
+      tags:
+        - Tournament
+      summary: Get Nearby Players
+      description: Retrieve players ranked around the specified player in the tournament.
+      parameters:
+        - name: tournamentId
+          in: path
+          description: The unique identifier of the tournament.
+          required: true
+          schema:
+            type: string
+        - name: playerId
+          in: path
+          description: The unique identifier of the player.
+          required: true
+          schema:
+            type: string
+        - name: range
+          in: query
+          description: Number of players above and below the specified player to retrieve.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Nearby players retrieved successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tournamentId:
+                    type: string
+                  playerId:
+                    type: string
+                  startRank:
+                    type: integer
+                  endRank:
+                    type: integer
+                  players:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        playerId:
+                          type: string
+                        displayName:
+                          type: string
+                        score:
+                          type: integer
+                        rank:
+                          type: integer
+components:
+  schemas:
+    Player:
+      type: object
+      properties:
+        playerId:
+          type: string
+        displayName:
+          type: string
+        tournaments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerTournament'
+        lastUpdated:
+          type: string
+          format: date-time
+      required:
+        - playerId
+        - displayName
+        - tournaments
+        - lastUpdated
+    PlayerTournament:
+      type: object
+      properties:
+        tournamentId:
+          type: string
+        score:
+          type: integer
+        rank:
+          type: integer
+      required:
+        - tournamentId
+        - score
+        - rank
+    Tournament:
+      type: object
+      properties:
+        tournamentId:
+          type: string
+        description:
+          type: string
+        order:
+          type: string
+          enum:
+            - LARGER_IS_BETTER
+            - SMALLER_IS_BETTER
+        numPlayers:
+          type: integer
+        lastUpdated:
+          type: string
+          format: date-time
+      required:
+        - tournamentId
+        - description
+        - order
+        - numPlayers
+        - lastUpdated
+    LeaderboardEntry:
+      type: object
+      properties:
+        playerId:
+          type: string
+        displayName:
+          type: string
+        score:
+          type: integer
+        rank:
+          type: integer
+      required:
+        - playerId
+        - displayName
+        - score
+        - rank
+    TournamentPlayer:
+      type: object
+      properties:
+        playerId:
+          type: string
+        displayName:
+          type: string
+        score:
+          type: integer
+        rank:
+          type: integer
+      required:
+        - playerId
+        - displayName
+        - score
+        - rank
