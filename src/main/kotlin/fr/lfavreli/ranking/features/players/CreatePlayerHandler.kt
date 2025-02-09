@@ -3,7 +3,6 @@ package fr.lfavreli.ranking.features.players
 import fr.lfavreli.ranking.features.dynamodb.PLAYER_TABLE
 import fr.lfavreli.ranking.features.players.model.CreatePlayerRequest
 import fr.lfavreli.ranking.features.players.model.Player
-import fr.lfavreli.ranking.features.players.model.toDynamoDbItem
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.time.OffsetDateTime
@@ -22,7 +21,7 @@ fun createPlayerHandler(request: CreatePlayerRequest, dynamoDbClient: DynamoDbCl
     )
 
     // Convert to DynamoDB item
-    val item = player.toDynamoDbItem()
+    val item = Player.toDynamoDbItem(player)
 
     // Save to DynamoDB
     val itemRequest = PutItemRequest.builder()

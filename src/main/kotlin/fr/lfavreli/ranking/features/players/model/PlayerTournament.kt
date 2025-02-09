@@ -8,12 +8,23 @@ data class PlayerTournament(
     val tournamentId: String,
     val score: Int,
     val rank: Int
-)
+) {
+    companion object {
+        fun fromDynamoDbItem(attribute: AttributeValue): PlayerTournament? {
+            val m = attribute.m() ?: return null
+            return PlayerTournament(
+                tournamentId = m["tournamentId"]?.s() ?: return null,
+                score = m["score"]?.n()?.toInt() ?: return null,
+                rank = m["rank"]?.n()?.toInt() ?: return null
+            )
+        }
 
-fun PlayerTournament.toDynamoDbItem(): Map<String, AttributeValue> {
-    return mapOf(
-        "tournamentId" to AttributeValue.builder().s(this.tournamentId).build(),
-        "score" to AttributeValue.builder().n(this.score.toString()).build(),
-        "rank" to AttributeValue.builder().n(this.rank.toString()).build()
-    )
+        fun toDynamoDbItem(tournament: PlayerTournament): Map<String, AttributeValue> {
+            return mapOf(
+                "tournamentId" to AttributeValue.builder().s(tournament.tournamentId).build(),
+                "score" to AttributeValue.builder().n(tournament.score.toString()).build(),
+                "rank" to AttributeValue.builder().n(tournament.rank.toString()).build()
+            )
+        }
+    }
 }
