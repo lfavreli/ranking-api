@@ -1,8 +1,6 @@
 package fr.lfavreli.ranking
 
-import fr.lfavreli.ranking.features.dynamodb.DynamoDBRoutes
-import fr.lfavreli.ranking.features.players.PlayerRoutes
-import fr.lfavreli.ranking.features.tournaments.TournamentRoutes
+import fr.lfavreli.ranking.routes.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.response.*

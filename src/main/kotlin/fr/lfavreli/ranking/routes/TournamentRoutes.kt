@@ -1,4 +1,4 @@
-package fr.lfavreli.ranking.features.tournaments
+package fr.lfavreli.ranking.routes
 
 import io.ktor.http.*
 import io.ktor.server.response.*

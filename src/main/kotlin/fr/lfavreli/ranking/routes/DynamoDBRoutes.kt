@@ -1,5 +1,7 @@
-package fr.lfavreli.ranking.features.dynamodb
+package fr.lfavreli.ranking.routes
 
+import fr.lfavreli.ranking.features.dynamodb.createTablesHandler
+import fr.lfavreli.ranking.features.dynamodb.deleteTablesHandler
 import io.ktor.server.routing.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 

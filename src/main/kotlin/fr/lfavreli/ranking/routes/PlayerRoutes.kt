@@ -1,5 +1,7 @@
-package fr.lfavreli.ranking.features.players
+package fr.lfavreli.ranking.routes
 
+import fr.lfavreli.ranking.features.players.createPlayerHandler
+import fr.lfavreli.ranking.features.players.getPlayerHandler
 import fr.lfavreli.ranking.features.players.model.CreatePlayerRequest
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
