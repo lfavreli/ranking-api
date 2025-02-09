@@ -1,4 +1,4 @@
-package fr.lfavreli.ranking
+package fr.lfavreli.ranking.di
 
 import org.koin.dsl.module
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
@@ -11,13 +11,7 @@ val dynamoDBModule = module {
         DynamoDbClient.builder()
             .region(Region.EU_WEST_1)
             .endpointOverride(java.net.URI("http://localhost:8000"))
-            .credentialsProvider(
-                StaticCredentialsProvider.create(AwsBasicCredentials.create("local", "local"))
-            )
+            .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create("local", "local")))
             .build()
-    }
-
-    single<DynamoDBService> {
-        DynamoDBService(get())
     }
 }
