@@ -28,6 +28,8 @@ Livrable :
 + Versionning dans l'URL
 + base_path = /api
 + Swagger
++ Unit testing
+* Integration testing
 
 + Authentication (API Key)
 + Login
@@ -40,11 +42,12 @@ Livrable :
 
 + Friend Leaderboard
 + Is user eliminated ?
++ Add sorting tournements list on GET /players (default 'lastUpdated' ; but may be sortBy=latestTournament|earliestTournament)
 
 -----------
 
 
-Prefix/BasePath : /api/v1
+Prefix/BasePath : /api/ranking/v1
 
 
 1. Ressource : Players
@@ -118,7 +121,7 @@ Output :
 1.2.4
 
 Request : PUT /players/:playerId
-Description : Modifie un joueur
+Description : Modifier un joueur
 Input :
 	> NOT YET IMPLEMENTED
 Output :
@@ -192,9 +195,9 @@ Output :
 2.2.3
 
 Request : GET /tournaments/{tournamentId}/leaderboard/top?number=:number
-Description : Récupérer les top joueurs
+Description : Récupérer les tops joueurs
 Input : 
-	> Query param :number : indique le nombre de top joueurs récupérer (meilleurs scores)
+	> Query param :number : indique le nombre de tops joueurs récupérer (meilleurs scores)
 Output :
 	> {
 	  "tournamentId": "001",
@@ -273,7 +276,7 @@ Output :
 Request : GET /tournaments/:tournamentId/players/:playerId/nearby?range=:range
 Description : Retrouver les joueurs classés autour d'un joueur donné
 Input : 
-	> Query param "range" : indique combien de joueur au-dessus et en-dessous récupérer
+	> Query param "range" : indique combien de joueurs au-dessus et endessous récupérer
 Output :
 	> {
 		"tournamentId": "001",
