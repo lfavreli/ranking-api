@@ -23,14 +23,15 @@ fun createPlayerHandler(request: CreatePlayerRequest, dynamoDbClient: DynamoDbCl
     // Convert to DynamoDB item
     val item = Player.toDynamoDbItem(player)
 
-    // Save to DynamoDB
+    // Create insert request
     val itemRequest = PutItemRequest.builder()
         .tableName(PLAYER_TABLE)
         .item(item)
         .build()
 
-    // TODO: handle exceptions
+    // Save to DynamoDB
     dynamoDbClient.putItem(itemRequest)
+    // TODO: handle exceptions
 
     return player;
 }

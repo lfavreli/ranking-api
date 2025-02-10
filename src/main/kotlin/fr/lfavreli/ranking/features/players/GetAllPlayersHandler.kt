@@ -6,10 +6,14 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest
 
 fun getAllPlayersHandler(dynamoDbClient: DynamoDbClient): List<Player> {
+    // Create query request
     val request = ScanRequest.builder()
         .tableName(PLAYER_TABLE)
         .build()
 
+    // Run query request
     val result = dynamoDbClient.scan(request)
+    // TODO: handle exceptions
+
     return result.items().mapNotNull { Player.fromDynamoDbItem(it) }
 }

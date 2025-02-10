@@ -1,6 +1,8 @@
 package fr.lfavreli.ranking
 
-import fr.lfavreli.ranking.routes.*
+import fr.lfavreli.ranking.routes.DynamoDBRoutes
+import fr.lfavreli.ranking.routes.PlayerRoutes
+import fr.lfavreli.ranking.routes.TournamentRoutes
 import io.ktor.server.application.*
 import io.ktor.server.plugins.swagger.*
 import io.ktor.server.response.*
@@ -22,7 +24,7 @@ fun Application.configureRouting() {
             swaggerUI(path = "/swagger-ui.html", swaggerFile = "specs/ranking-api.openapi.yml")
             DynamoDBRoutes(dynamoDbClient)
             PlayerRoutes(dynamoDbClient)
-            TournamentRoutes()
+            TournamentRoutes(dynamoDbClient)
         }
     }
 }

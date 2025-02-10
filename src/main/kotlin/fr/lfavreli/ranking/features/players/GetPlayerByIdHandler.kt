@@ -8,11 +8,15 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.GetItemRequest
 
 fun getPlayerByIdHandler(playerId: String, dynamoDbClient: DynamoDbClient) : Player? {
+    // Create query request
     val request = GetItemRequest.builder()
         .tableName(PLAYER_TABLE)
         .key(mapOf(PLAYER_ID to AttributeValue.builder().s(playerId).build()))
         .build()
 
+    // Run query request
     val result = dynamoDbClient.getItem(request)
+    // TODO: handle exceptions
+
     return Player.fromDynamoDbItem(result.item())
 }
