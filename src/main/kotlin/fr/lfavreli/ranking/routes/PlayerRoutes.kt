@@ -33,10 +33,7 @@ fun Route.PlayerRoutes(dynamoDbClient: DynamoDbClient) {
             get {
                 val playerId = call.parameters["playerId"] ?: throw BadRequestException("Missing or invalid playerId")
                 val player = getPlayerByIdHandler(playerId, dynamoDbClient)
-                when {
-                    player != null -> call.respond(player)
-                    else -> throw NotFoundException("Player not found")
-                }
+                call.respond(player)
             }
 
             // PUT /players/{playerId} - Update Player

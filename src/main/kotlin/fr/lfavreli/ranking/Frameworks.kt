@@ -26,6 +26,7 @@ fun Application.configureFrameworks() {
         handleException<BadRequestException>(HttpStatusCode.BadRequest)
         handleException<NotFoundException>(HttpStatusCode.NotFound)
         handleException<NotImplementedException>(HttpStatusCode.NotImplemented)
+        handleException<RuntimeException>(HttpStatusCode.InternalServerError)
     }
 }
 
