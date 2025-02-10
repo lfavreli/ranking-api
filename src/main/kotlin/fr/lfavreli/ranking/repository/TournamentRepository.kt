@@ -20,7 +20,7 @@ object TournamentRepository {
             key = mapOf(TOURNAMENT_ID to AttributeValue.builder().s(tournamentId).build()),
             client = dynamoDbClient
         )
-        return Tournament.fromDynamoDbItem(tournamentItem) ?: throw NotFoundException("Player not found")
+        return Tournament.fromDynamoDbItem(tournamentItem) ?: throw NotFoundException("Tournament not found")
     }
 
     fun isTournamentExists(tournamentId: String, dynamoDbClient: DynamoDbClient): Boolean {

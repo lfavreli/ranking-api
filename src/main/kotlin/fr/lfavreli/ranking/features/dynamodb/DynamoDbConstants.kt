@@ -11,3 +11,5 @@ const val PLAYER_TABLE = "Player"
 
 const val LEADERBOARD_SCORE = "score"
 const val LEADERBOARD_TABLE = "Leaderboard"
+
+const val DISPLAY_NAME = "displayName"

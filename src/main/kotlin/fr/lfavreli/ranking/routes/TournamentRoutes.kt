@@ -3,6 +3,7 @@ package fr.lfavreli.ranking.routes
 import fr.lfavreli.ranking.exception.NotImplementedException
 import fr.lfavreli.ranking.features.tournaments.*
 import fr.lfavreli.ranking.features.tournaments.model.CreateTournamentRequest
+import fr.lfavreli.ranking.features.tournaments.model.TournamentLeaderboardResponse
 import fr.lfavreli.ranking.features.tournaments.model.UpdateScoreRequest
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
@@ -37,6 +38,15 @@ fun Route.TournamentRoutes(dynamoDbClient: DynamoDbClient) {
             // DELETE /tournaments/{tournamentId} - Delete Tournament
             delete {
                 throw NotImplementedException("Deleting a Tournament is not yet implemented")
+            }
+
+            route("/leaderboard") {
+                // GET tournaments/{tournamentId}/leaderboard - Retrieve Leaderboard
+                get {
+                    val tournamentId = call.parameters["tournamentId"] ?: throw BadRequestException("Missing or invalid tournamentId")
+                    val leaderboard = getLeaderboardHandler(tournamentId, dynamoDbClient)
+                    call.respond(TournamentLeaderboardResponse(tournamentId, leaderboard))
+                }
             }
 
             route("/players") {

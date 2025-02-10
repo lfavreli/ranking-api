@@ -1,9 +1,8 @@
 package fr.lfavreli.ranking.repository
 
-import fr.lfavreli.ranking.features.dynamodb.LEADERBOARD_SCORE
-import fr.lfavreli.ranking.features.dynamodb.LEADERBOARD_TABLE
-import fr.lfavreli.ranking.features.dynamodb.PLAYER_ID
-import fr.lfavreli.ranking.features.dynamodb.TOURNAMENT_ID
+import fr.lfavreli.ranking.features.dynamodb.*
+import fr.lfavreli.ranking.features.players.model.Player
+import fr.lfavreli.ranking.features.tournaments.model.LeaderboardEntry
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
@@ -11,13 +10,14 @@ import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 
 object LeaderboardRepository {
 
-    fun saveScore(tournamentId: String, playerId: String, newScore: Int, dynamoDbClient: DynamoDbClient) {
+    fun saveScore(tournamentId: String, player: Player, newScore: Int, dynamoDbClient: DynamoDbClient) {
         DynamoDBOperations.putItem(
             tableName = LEADERBOARD_TABLE,
             item = mapOf(
                 TOURNAMENT_ID to AttributeValue.builder().s(tournamentId).build(),
-                PLAYER_ID to AttributeValue.builder().s(playerId).build(),
-                LEADERBOARD_SCORE to AttributeValue.builder().n(newScore.toString()).build()
+                PLAYER_ID to AttributeValue.builder().s(player.playerId).build(),
+                LEADERBOARD_SCORE to AttributeValue.builder().n(newScore.toString()).build(),
+                DISPLAY_NAME to AttributeValue.builder().s(player.displayName).build()
             ),
             client = dynamoDbClient
         )
@@ -34,6 +34,22 @@ object LeaderboardRepository {
         )
         // Count how many players have a higher score
         return leaderboardResult.items().count { (it[LEADERBOARD_SCORE]?.n()?.toInt() ?: 0) > score } + 1
+    }
+
+    fun getLeaderboard(tournamentId: String, dynamoDbClient: DynamoDbClient): List<LeaderboardEntry> {
+        val queryRequest = QueryRequest.builder()
+            .tableName(LEADERBOARD_TABLE)
+            .keyConditionExpression("$TOURNAMENT_ID = :tournamentId")
+            .expressionAttributeValues(
+                mapOf(":tournamentId" to AttributeValue.builder().s(tournamentId).build())
+            )
+            .scanIndexForward(false) // Sorting from highest to lowest score
+            .build()
+
+        val leaderboardResults = dynamoDbClient.query(queryRequest).items()
+        return leaderboardResults.mapIndexedNotNull { index, item ->
+            LeaderboardEntry.fromDynamoDbItem(item, index + 1)
+        }
     }
 
     fun deleteTournamentPlayers(tournamentId: String, dynamoDbClient: DynamoDbClient) {

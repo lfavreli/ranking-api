@@ -15,7 +15,7 @@ fun updatePlayerScoreHandler(tournamentId: String, playerId: String, newScore: I
     val player = PlayerRepository.getById(playerId, dynamoDbClient)
 
     // 3. Update (or insert) the new score in Leaderboard
-    LeaderboardRepository.saveScore(tournamentId, playerId, newScore, dynamoDbClient)
+    LeaderboardRepository.saveScore(tournamentId, player, newScore, dynamoDbClient)
 
     // 4. Recalculate rank
     val rank = LeaderboardRepository.getPlayerRank(tournamentId, newScore, dynamoDbClient)
