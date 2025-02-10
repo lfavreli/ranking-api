@@ -1,6 +1,7 @@
 package fr.lfavreli.ranking.routes
 
 import fr.lfavreli.ranking.features.tournaments.createTournamentHandler
+import fr.lfavreli.ranking.features.tournaments.getAllTournamentsHandler
 import fr.lfavreli.ranking.features.tournaments.model.CreateTournamentRequest
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -11,7 +12,8 @@ fun Route.TournamentRoutes(dynamoDbClient: DynamoDbClient) {
     route("/tournaments") {
         // GET /tournaments - List Tournaments
         get {
-            call.respondText("List all tournaments")
+            val tournaments = getAllTournamentsHandler(dynamoDbClient)
+            call.respond(mapOf("items" to tournaments))
         }
 
         // POST /tournaments - Create Tournament
