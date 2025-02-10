@@ -30,7 +30,6 @@ object LeaderboardRepository {
             scanIndexForward = false, // Ensures scores are sorted from highest to lowest.
             client = dynamoDbClient
         )
-
         // Count how many players have a higher score
         return leaderboardResult.items().count { (it[LEADERBOARD_SCORE]?.n()?.toInt() ?: 0) > score } + 1
     }

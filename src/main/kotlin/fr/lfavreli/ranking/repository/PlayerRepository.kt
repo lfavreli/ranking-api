@@ -38,4 +38,9 @@ object PlayerRepository {
             PlayerTournament(tournamentId, score, rank)
         }
     }
+
+    fun save(player: Player, dynamoDbClient: DynamoDbClient) {
+        val dynamoDbItem = Player.toDynamoDbItem(player)
+        DynamoDBOperations.putItem(PLAYER_TABLE, dynamoDbItem, dynamoDbClient)
+    }
 }

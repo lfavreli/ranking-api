@@ -8,7 +8,7 @@ data class Tournament(
     val tournamentId: String,
     val description: String,
     val order: Order,
-    val numPlayers: Int,
+    val numPlayers: Int?,
     val lastUpdated: String
 ) {
     companion object {
@@ -17,7 +17,7 @@ data class Tournament(
                 tournamentId = item["tournamentId"]?.s() ?: return null,
                 description = item["description"]?.s() ?: return null,
                 order = item["order"]?.s()?.let { Order.entries.find { enum -> enum.value == it } } ?: return null,
-                numPlayers = item["numPlayers"]?.n()?.toInt() ?: return null,
+                numPlayers = null,
                 lastUpdated = item["lastUpdated"]?.s() ?: return null
             )
         }
@@ -27,7 +27,6 @@ data class Tournament(
                 "tournamentId" to AttributeValue.builder().s(tournament.tournamentId).build(),
                 "description" to AttributeValue.builder().s(tournament.description).build(),
                 "order" to AttributeValue.builder().s(tournament.order.value).build(),
-                "numPlayers" to AttributeValue.builder().n(tournament.numPlayers.toString()).build(),
                 "lastUpdated" to AttributeValue.builder().s(tournament.lastUpdated).build()
             )
         }

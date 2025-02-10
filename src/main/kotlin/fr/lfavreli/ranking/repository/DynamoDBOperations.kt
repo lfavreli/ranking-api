@@ -75,6 +75,4 @@ object DynamoDBOperations {
             throw RuntimeException("Error querying $tableName with key condition expression '$keyConditionExpression': ${e.message}", e)
         }
     }
-
-
 }
