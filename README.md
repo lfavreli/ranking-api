@@ -1,6 +1,5 @@
 # API Ranking
 
-
 ## Requirements
 
 - High availability

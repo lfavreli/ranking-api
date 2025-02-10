@@ -1,6 +1,7 @@
 package fr.lfavreli.ranking
 
 import fr.lfavreli.ranking.di.dynamoDBModule
+import fr.lfavreli.ranking.exception.NotImplementedException
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -22,11 +23,17 @@ fun Application.configureFrameworks() {
     }
 
     install(StatusPages) {
-        exception<BadRequestException> { call, cause ->
-            call.respond(HttpStatusCode.BadRequest, mapOf("message" to cause.message))
-        }
-        exception<NotFoundException> { call, cause ->
-            call.respond(HttpStatusCode.NotFound, mapOf("message" to cause.message))
-        }
+        handleException<BadRequestException>(HttpStatusCode.BadRequest)
+        handleException<NotFoundException>(HttpStatusCode.NotFound)
+        handleException<NotImplementedException>(HttpStatusCode.NotImplemented)
     }
 }
+
+inline fun <reified T : Throwable> StatusPagesConfig.handleException(statusCode: HttpStatusCode) {
+    exception<T> { call, cause ->
+        call.respond(statusCode, mapOf("message" to cause.message))
+    }
+}
+
+
+

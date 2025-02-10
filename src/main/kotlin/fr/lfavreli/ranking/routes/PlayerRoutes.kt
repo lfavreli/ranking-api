@@ -1,7 +1,9 @@
 package fr.lfavreli.ranking.routes
 
+import fr.lfavreli.ranking.exception.NotImplementedException
 import fr.lfavreli.ranking.features.players.createPlayerHandler
-import fr.lfavreli.ranking.features.players.getPlayerHandler
+import fr.lfavreli.ranking.features.players.getAllPlayersHandler
+import fr.lfavreli.ranking.features.players.getPlayerByIdHandler
 import fr.lfavreli.ranking.features.players.model.CreatePlayerRequest
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
@@ -9,14 +11,13 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
-data class ErrorResponse(val message: String)
-
 fun Route.PlayerRoutes(dynamoDbClient: DynamoDbClient) {
 
     route("/players") {
         // GET /players - List Players
         get {
-            call.respondText("List Players")
+            val players = getAllPlayersHandler(dynamoDbClient)
+            call.respond(mapOf("items" to players))
         }
 
         // POST /players - Create Player
@@ -26,12 +27,12 @@ fun Route.PlayerRoutes(dynamoDbClient: DynamoDbClient) {
             call.respond(player)
         }
 
-        // Specific player routes
+        // Specific Player routes
         route("/{playerId}") {
             // GET /players/{playerId} - Retrieve Player
             get {
                 val playerId = call.parameters["playerId"] ?: throw BadRequestException("Missing or invalid playerId")
-                val player = getPlayerHandler(playerId, dynamoDbClient)
+                val player = getPlayerByIdHandler(playerId, dynamoDbClient)
                 when {
                     player != null -> call.respond(player)
                     else -> throw NotFoundException("Player not found")
@@ -40,8 +41,7 @@ fun Route.PlayerRoutes(dynamoDbClient: DynamoDbClient) {
 
             // PUT /players/{playerId} - Update Player
             put {
-                val playerId = call.parameters["playerId"]
-                call.respondText("Update Player: $playerId")
+                throw NotImplementedException("Updating a Player is not yet implemented")
             }
         }
     }
