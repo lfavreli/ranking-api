@@ -1,8 +1,27 @@
+name: ranking-api-project
+
+networks:
+  ranking-api-net:
+    driver: bridge
+
 volumes:
   dynamodb:
     external: true
 
 services:
+    ranking-api:
+      build:
+        context: . # Directory containing the Dockerfile
+        dockerfile: Dockerfile
+      container_name: ranking-api
+      ports:
+        - "8080:8080"
+      environment:
+        - DYNAMODB_ENDPOINT=http://dynamodb-local:8000
+      depends_on:
+        - dynamodb-local
+      networks:
+        - ranking-api-net
     dynamodb-local:
       command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
       image: "amazon/dynamodb-local:latest"
@@ -13,6 +32,8 @@ services:
       volumes:
         - dynamodb:/home/dynamodblocal/data
       working_dir: /home/dynamodblocal
+      networks:
+        - ranking-api-net
 
     dynamodb:
       image: "aaronshaf/dynamodb-admin"
@@ -23,3 +44,5 @@ services:
         - "8001:8001"
       environment:
         - DYNAMO_ENDPOINT=http://dynamodb-local:8000
+      networks:
+        - ranking-api-net
