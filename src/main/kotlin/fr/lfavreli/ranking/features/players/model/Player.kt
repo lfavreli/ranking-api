@@ -7,7 +7,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 data class Player(
     val playerId: String,
     val displayName: String,
-    val tournaments: List<PlayerTournament>,
+    val tournaments: List<PlayerTournament>?,
     val lastUpdated: String
 )  {
     companion object {
@@ -15,7 +15,7 @@ data class Player(
             return Player(
                 playerId = item["playerId"]?.s() ?: return null,
                 displayName = item["displayName"]?.s() ?: return null,
-                tournaments = item["tournaments"]?.l()?.mapNotNull { PlayerTournament.fromDynamoDbItem(it) } ?: emptyList(),
+                tournaments = null,
                 lastUpdated = item["lastUpdated"]?.s() ?: return null
             )
         }
@@ -24,15 +24,8 @@ data class Player(
             return mapOf(
                 "playerId" to AttributeValue.builder().s(player.playerId).build(),
                 "displayName" to AttributeValue.builder().s(player.displayName).build(),
-                "tournaments" to AttributeValue.builder().l(toAttributeValues(player.tournaments)).build(),
                 "lastUpdated" to AttributeValue.builder().s(player.lastUpdated).build()
             )
-        }
-
-        private fun toAttributeValues(tournaments: List<PlayerTournament>): List<AttributeValue> {
-            return tournaments.map {
-                AttributeValue.builder().m(PlayerTournament.toDynamoDbItem(it)).build()
-            }
         }
     }
 }

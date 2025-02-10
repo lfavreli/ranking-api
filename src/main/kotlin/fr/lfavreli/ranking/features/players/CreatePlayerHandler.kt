@@ -16,7 +16,7 @@ fun createPlayerHandler(request: CreatePlayerRequest, dynamoDbClient: DynamoDbCl
     val player = Player(
         playerId = playerId,
         displayName = request.displayName,
-        tournaments = emptyList(),
+        tournaments = null,
         lastUpdated = lastUpdated
     )
 

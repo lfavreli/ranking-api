@@ -48,13 +48,28 @@ private fun createLeaderboardTableRequest(): CreateTableRequest? {
         .keySchema(
             listOf(
                 KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
-                KeySchemaElement.builder().attributeName(LEADERBOARD_SORT_KEY).keyType(KeyType.RANGE).build()
+                KeySchemaElement.builder().attributeName(PLAYER_ID).keyType(KeyType.RANGE).build()
             )
         )
         .attributeDefinitions(
             listOf(
                 AttributeDefinition.builder().attributeName(TOURNAMENT_ID).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder().attributeName(LEADERBOARD_SORT_KEY).attributeType(ScalarAttributeType.N).build()
+                AttributeDefinition.builder().attributeName(PLAYER_ID).attributeType(ScalarAttributeType.S).build(),
+                AttributeDefinition.builder().attributeName(LEADERBOARD_SCORE).attributeType(ScalarAttributeType.N).build()
+            )
+        )
+        .globalSecondaryIndexes(
+            listOf(
+                GlobalSecondaryIndex.builder()
+                    .indexName("score-index") // GSI for sorting by score
+                    .keySchema(
+                        listOf(
+                            KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
+                            KeySchemaElement.builder().attributeName(LEADERBOARD_SCORE).keyType(KeyType.RANGE).build()
+                        )
+                    )
+                    .projection(Projection.builder().projectionType(ProjectionType.ALL).build()) // Include all attributes in GSI
+                    .build()
             )
         )
         .billingMode(BillingMode.PAY_PER_REQUEST)

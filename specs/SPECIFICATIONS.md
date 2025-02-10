@@ -40,9 +40,10 @@ Livrable :
 + Rate-limit
 + Health-check
 
++ Handle tie 
 + Friend Leaderboard
 + Is user eliminated ?
-+ Add sorting tournements list on GET /players (default 'lastUpdated' ; but may be sortBy=latestTournament|earliestTournament)
++ Add sorting tournaments list on GET /players (default 'lastUpdated' ; but may be sortBy=latestTournament|earliestTournament)
 
 -----------
 

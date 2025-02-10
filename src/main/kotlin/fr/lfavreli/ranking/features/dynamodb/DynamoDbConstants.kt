@@ -9,5 +9,5 @@ const val TOURNAMENT_TABLE = "Tournament"
 const val PLAYER_ID = "playerId"
 const val PLAYER_TABLE = "Player"
 
-const val LEADERBOARD_SORT_KEY = "score"
+const val LEADERBOARD_SCORE = "score"
 const val LEADERBOARD_TABLE = "Leaderboard"
