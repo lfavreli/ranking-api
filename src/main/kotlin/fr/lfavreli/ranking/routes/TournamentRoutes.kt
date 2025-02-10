@@ -1,12 +1,9 @@
 package fr.lfavreli.ranking.routes
 
 import fr.lfavreli.ranking.exception.NotImplementedException
-import fr.lfavreli.ranking.features.tournaments.createTournamentHandler
-import fr.lfavreli.ranking.features.tournaments.getAllTournamentsHandler
-import fr.lfavreli.ranking.features.tournaments.getTournamentByIdHandler
+import fr.lfavreli.ranking.features.tournaments.*
 import fr.lfavreli.ranking.features.tournaments.model.CreateTournamentRequest
 import fr.lfavreli.ranking.features.tournaments.model.UpdateScoreRequest
-import fr.lfavreli.ranking.features.tournaments.updatePlayerScoreHandler
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -34,17 +31,24 @@ fun Route.TournamentRoutes(dynamoDbClient: DynamoDbClient) {
             get {
                 val tournamentId = call.parameters["tournamentId"] ?: throw BadRequestException("Missing or invalid tournamentId")
                 val tournament = getTournamentByIdHandler(tournamentId, dynamoDbClient)
-                when {
-                    tournament != null -> call.respond(tournament)
-                    else -> throw NotFoundException("Tournament not found")
-                }
+                call.respond(tournament)
             }
 
+            // DELETE /tournaments/{tournamentId} - Delete Tournament
             delete {
                 throw NotImplementedException("Deleting a Tournament is not yet implemented")
             }
 
             route("/players") {
+                // DELETE tournaments/{tournamentId}/players - Delete Tournament Players
+                delete {
+                    val tournamentId = call.parameters["tournamentId"] ?: throw BadRequestException("Missing or invalid tournamentId")
+                    deleteTournamentPlayersHandler(tournamentId, dynamoDbClient)
+                    call.respond(mapOf(
+                        "tournamentId" to tournamentId,
+                        "message" to "Players successfully removed from tournament."
+                    ))
+                }
 
                 route("/{playerId}") {
                     // PATCH tournaments/{tournamentId}/players/{playerId}/score
