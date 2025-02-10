@@ -13,11 +13,17 @@
 
 ## Prerequisite
 
-- Docker must be install
-- The Docker `dynamodb` volume must be created
+1. Docker must be installed
+2. The Docker `dynamodb` volume must be created
 
 ```bash
 $ docker volume create dynamodb
+```
+
+3. The Docker `ranking-api-net` network must be created
+
+```bash
+$ docker network create ranking-api-net
 ```
 
 ### Content Negotiation
