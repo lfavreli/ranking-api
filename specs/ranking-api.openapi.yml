@@ -300,8 +300,8 @@ paths:
     delete:
       tags:
         - Tournament
-      summary: Delete All Tournament Players
-      description: Remove all players from the specified tournament.
+      summary: Remove Players from Tournament
+      description: Delete players of a specific tournament.
       parameters:
         - name: tournamentId
           in: path
@@ -311,11 +311,18 @@ paths:
             type: string
       responses:
         '200':
-          description: All players have been removed from the tournament.
+          description: Players deleted successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tournament'
+                type: object
+                properties:
+                  tournamentId:
+                    type: string
+                  message:
+                    type: string
+                    example: "Players successfully removed from tournament."
+
   /tournaments/{tournamentId}/players/{playerId}/score:
     patch:
       tags:
