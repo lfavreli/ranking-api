@@ -22,6 +22,7 @@ services:
         - dynamodb-local
       networks:
         - ranking-api-net
+      profiles: [full]
     dynamodb-local:
       command: "-jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data"
       image: "amazon/dynamodb-local:latest"
