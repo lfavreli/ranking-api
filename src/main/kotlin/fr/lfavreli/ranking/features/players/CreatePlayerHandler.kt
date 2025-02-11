@@ -1,11 +1,9 @@
 package fr.lfavreli.ranking.features.players
 
-import fr.lfavreli.ranking.features.dynamodb.PLAYER_TABLE
 import fr.lfavreli.ranking.features.players.model.CreatePlayerRequest
 import fr.lfavreli.ranking.features.players.model.Player
 import fr.lfavreli.ranking.repository.PlayerRepository
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
-import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import java.time.OffsetDateTime
 import java.util.*
 
@@ -16,7 +14,7 @@ fun createPlayerHandler(request: CreatePlayerRequest, dynamoDbClient: DynamoDbCl
     // 2. Save the player in the database
     PlayerRepository.save(player, dynamoDbClient)
 
-    return player;
+    return player
 }
 
 private fun generatePlayerEntity(request: CreatePlayerRequest): Player {

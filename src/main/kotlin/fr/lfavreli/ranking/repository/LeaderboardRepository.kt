@@ -26,28 +26,28 @@ object LeaderboardRepository {
     fun getPlayerRank(tournamentId: String, score: Int, dynamoDbClient: DynamoDbClient): Int {
         val leaderboardResult = DynamoDBOperations.query(
             tableName = LEADERBOARD_TABLE,
-            indexName = "score-index",
-            keyConditionExpression = "tournamentId = :tournamentId",
-            expressionAttributeValues = mapOf(":tournamentId" to AttributeValue.builder().s(tournamentId).build()),
-            scanIndexForward = false, // Ensures scores are sorted from highest to lowest.
+            indexName = LEADERBOARD_SCORE_INDEX,
+            keyConditionExpression = "$TOURNAMENT_ID = :tournamentId AND $LEADERBOARD_SCORE > :score",
+            expressionAttributeValues = mapOf(
+                ":tournamentId" to AttributeValue.builder().s(tournamentId).build(),
+                ":score" to AttributeValue.builder().n(score.toString()).build()
+            ),
             client = dynamoDbClient
         )
-        // Count how many players have a higher score
-        return leaderboardResult.items().count { (it[LEADERBOARD_SCORE]?.n()?.toInt() ?: 0) > score } + 1
+        // Rank is 1 + the number of players with a higher score
+        return leaderboardResult.size + 1
     }
 
     fun getLeaderboard(tournamentId: String, dynamoDbClient: DynamoDbClient): List<LeaderboardEntry> {
-        val queryRequest = QueryRequest.builder()
-            .tableName(LEADERBOARD_TABLE)
-            .keyConditionExpression("$TOURNAMENT_ID = :tournamentId")
-            .expressionAttributeValues(
-                mapOf(":tournamentId" to AttributeValue.builder().s(tournamentId).build())
-            )
-            .scanIndexForward(false) // Sorting from highest to lowest score
-            .build()
-
-        val leaderboardResults = dynamoDbClient.query(queryRequest).items()
-        return leaderboardResults.mapIndexedNotNull { index, item ->
+        val leaderboardResult = DynamoDBOperations.query(
+            tableName = LEADERBOARD_TABLE,
+            indexName = LEADERBOARD_SCORE_INDEX,
+            keyConditionExpression = "$TOURNAMENT_ID = :tournamentId",
+            expressionAttributeValues = mapOf(":tournamentId" to AttributeValue.builder().s(tournamentId).build()),
+            scanIndexForward = false, // Ensures scores are sorted from highest to lowest
+            client = dynamoDbClient
+        )
+        return leaderboardResult.mapIndexedNotNull { index, item ->
             LeaderboardEntry.fromDynamoDbItem(item, index + 1)
         }
     }

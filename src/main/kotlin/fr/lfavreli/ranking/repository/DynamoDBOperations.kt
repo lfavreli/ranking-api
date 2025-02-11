@@ -11,10 +11,11 @@ object DynamoDBOperations {
         client: DynamoDbClient
     ): MutableMap<String, AttributeValue> {
         return try {
-            client.getItem(GetItemRequest.builder()
-                .tableName(tableName)
-                .key(key)
-                .build()
+            client.getItem(
+                GetItemRequest.builder()
+                    .tableName(tableName)
+                    .key(key)
+                    .build()
             ).item()
         } catch (e: Exception) {
             throw RuntimeException("Error fetching item from $tableName: ${e.message}", e)
@@ -27,10 +28,11 @@ object DynamoDBOperations {
         client: DynamoDbClient
     ) {
         try {
-            client.putItem(PutItemRequest.builder()
-                .tableName(tableName)
-                .item(item)
-                .build()
+            client.putItem(
+                PutItemRequest.builder()
+                    .tableName(tableName)
+                    .item(item)
+                    .build()
             )
         } catch (e: Exception) {
             throw RuntimeException("Error putting item into $tableName: ${e.message}", e)
@@ -60,17 +62,17 @@ object DynamoDBOperations {
         expressionAttributeValues: Map<String, AttributeValue>,
         scanIndexForward: Boolean = true,
         client: DynamoDbClient
-    ): QueryResponse {
+    ): MutableList<MutableMap<String, AttributeValue>> {
         return try {
-            val queryRequest = QueryRequest.builder()
-                .tableName(tableName)
-                .indexName(indexName)
-                .keyConditionExpression(keyConditionExpression)
-                .expressionAttributeValues(expressionAttributeValues)
-                .scanIndexForward(scanIndexForward)
-                .build()
-
-            client.query(queryRequest)
+            client.query(
+                QueryRequest.builder()
+                    .tableName(tableName)
+                    .indexName(indexName)
+                    .keyConditionExpression(keyConditionExpression)
+                    .expressionAttributeValues(expressionAttributeValues)
+                    .scanIndexForward(scanIndexForward)
+                    .build())
+                .items()
         } catch (e: Exception) {
             throw RuntimeException("Error querying $tableName with key condition expression '$keyConditionExpression': ${e.message}", e)
         }
