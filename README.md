@@ -1,101 +1,106 @@
-# API Ranking
+# 🏆 Tournament Ranking API
 
-## Requirements
+A Kotlin-based API for managing players, tournaments, and leaderboards. This project demonstrates my expertise in designing scalable APIs using **Kotlin**, **Ktor**, **Koin**, **DynamoDB**, and **Clean Architecture** principles.
 
-- High availability
-- Real-time player activity and metrics
-- Low latency aggregations and joins
-- Scalability to millions of players and thousands of concurrent users
-- Reliability
-- Minimal operational overhead : focus on game development, not infrastructure
-- Fraud and anomaly detection
+## 🚀 Features
 
-## Prerequisite
-
-1. Docker must be installed
-2. The Docker `dynamodb` volume must be created
-
-```bash
-$ docker volume create dynamodb
-```
-
-3. The Docker `ranking-api-net` network must be created
-
-```bash
-$ docker network create ranking-api-net
-```
-
-### Content Negotiation
-
-- Add JSON content negotiation to handle incoming requests with JSON MIME types
-- Add JSON serialization to handle incoming request data
-
-## Development
-
-### Auto-Relaod
-
-* Rebuild a project automatically using Gradle
-
-```bash
-$ gradlew -t build
-# To skip running tests when reloading a project
-$ gradlew -t build -x test -i
-```
-
-## Production
-
-### Build
-
-* Building project and disable auto-reloading:
-
-```bash
-$ ./gradlew build -Pdevelopment=false
-```
-## Resources
-
-- [Scaling Real-time Gaming Leaderboards for Millions of Players](https://www.youtube.com/watch?v=HAb-tWI8oVk)
-- [Designing a Realtime Gaming Leaderboard - Horizontally Scalable and Highly Available](https://www.youtube.com/watch?v=UerkzwZ_zSY)
+- **Player & Tournament Management**: Create and update players and tournaments.
+- **Leaderboard System**: Fetch rankings and retrieve nearby players.
+- **Dependency Injection**: Powered by **Koin** for modular architecture.
+- **OpenAPI/Swagger Documentation**: Available at `/api/ranking/v1/swagger-ui.html`.
+- **Dockerized Environment**: Both the application and **DynamoDB** run in **Docker**.
+- **Hot Reload**: Supports **auto-reload** during development.
+- **Custom Exception Handling**: Proper error handling with **StatusPage**.
+- **Postman Collection**: Available in `/specs` for easy API testing.
 
 ---
 
-# ktor-sample
+## 🔧 Prerequisites
 
-This project was created using the [Ktor Project Generator](https://start.ktor.io).
+Before running the project, ensure you have:
 
-Here are some useful links to get you started:
+- ✅ [Docker](https://www.docker.com/) installed
+- ✅ [Gradle](https://gradle.org/) installed
+- ✅ [JDK 11+](https://adoptopenjdk.net/) installed
 
-- [Ktor Documentation](https://ktor.io/docs/home.html)
-- [Ktor GitHub page](https://github.com/ktorio/ktor)
-- The [Ktor Slack chat](https://app.slack.com/client/T09229ZC6/C0A974TJ9). You'll need
-  to [request an invite](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up) to join.
+---
 
-## Features
+## 🛠 How to Run
 
-Here's a list of features included in this project:
+### 🏗 Development Mode
+Run the following commands:
 
-| Name                                               | Description                                                 |
-| ----------------------------------------------------|------------------------------------------------------------- |
-| [Koin](https://start.ktor.io/p/koin)               | Provides dependency injection                               |
-| [Routing](https://start.ktor.io/p/routing-default) | Allows to define structured routes and associated handlers. |
-
-## Building & Running
-
-To build or run the project, use one of the following tasks:
-
-| Task                          | Description                                                          |
-| -------------------------------|---------------------------------------------------------------------- |
-| `./gradlew test`              | Run the tests                                                        |
-| `./gradlew build`             | Build everything                                                     |
-| `buildFatJar`                 | Build an executable JAR of the server with all dependencies included |
-| `buildImage`                  | Build the docker image to use with the fat JAR                       |
-| `publishImageToLocalRegistry` | Publish the docker image locally                                     |
-| `run`                         | Run the server                                                       |
-| `runDocker`                   | Run using the local docker image                                     |
-
-If the server starts successfully, you'll see the following output:
-
-```
-2024-12-04 14:32:45.584 [main] INFO  Application - Application started in 0.303 seconds.
-2024-12-04 14:32:45.682 [main] INFO  Application - Responding at http://0.0.0.0:8080
+```sh
+docker compose up        # Starts DynamoDB and DynamoDB Admin services
+./gradlew run            # Starts the Ktor application
 ```
 
+### 🐳 Containerized Mode
+Run the project as fully Dockerized:
+
+```sh
+docker compose --profile full up
+```
+
+### 📡 Service Ports
+| Service         | Port  |
+|----------------|-------|
+| Application    | `8080` |
+| DynamoDB       | `8000` |
+| DynamoDB Admin | `8001` |
+
+---
+
+## 🎯 API Endpoints
+
+📝 For full API documentation, visit the Swagger UI at:
+
+```sh
+http://localhost:8080/api/ranking/v1/swagger-ui.html
+```
+
+
+---
+
+## ⚠️ Known Limitations
+
+- 🚧 **Partial API Implementation**:
+  - Creating players and updating scores works.
+  - Retrieving leaderboards is functional.
+
+- 🔗 **Tightly Coupled with DynamoDB**:
+  - The current implementation has a strong dependency on **DynamoDB**, which reduces flexibility.
+  - Greater use of **Dependency Injection (DI)** is needed to improve modularity.
+  - Moving towards **Clean Architecture** will enhance separation of concerns.
+
+- 🚀 **Scalability Considerations**:
+  - Depending on the **read/write volume**, a **CQRS architecture** may be beneficial.
+  - **DynamoDB** can remain the write store, while **Rockset** can be used for querying large datasets efficiently.
+
+---
+
+## 🚀 API Future Improvements
+
+### ✅ Test Coverage
+- 🧪 **Expand unit and integration tests** to improve reliability.
+- 🔍 **Automate API response validation** with Postman test collections.
+
+### 🔒 Authentication & Security
+- 🔑 **Implement JWT-based authentication** for secured endpoints.
+- 🔐 **Integrate OAuth2 for production environments**.
+
+### 📊 Optimization & Performance
+- 🔄 **Introduce pagination** for endpoints returning large datasets.
+- 🏎 **Implement caching** to improve response times for frequently accessed data.
+- 🚦 **Set up rate limiting** to prevent API abuse.
+
+### 📡 Observability & Monitoring
+- 📜 **Enable structured logging and request tracing** for better debugging.
+- 📊 **Integrate an APM (Application Performance Monitoring) tool** to track performance and detect bottlenecks.
+
+### 💡 Other Enhancements
+- 🏥 **Add health-check endpoints** (liveness and readiness probes).
+- 🔄 **Set up a CI/CD pipeline** with GitHub Actions for automated testing and deployments.
+- 🏆 **Improve leaderboard logic**:
+  - Properly handle **tie-breaking scenarios**.
+  - Add **sorting options** for rankings.
