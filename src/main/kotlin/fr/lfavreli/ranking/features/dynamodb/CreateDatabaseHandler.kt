@@ -61,7 +61,7 @@ private fun createLeaderboardTableRequest(): CreateTableRequest? {
         .globalSecondaryIndexes(
             listOf(
                 GlobalSecondaryIndex.builder()
-                    .indexName("score-index") // GSI for sorting by score
+                    .indexName(LEADERBOARD_SCORE_INDEX) // GSI for sorting by score
                     .keySchema(
                         listOf(
                             KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
