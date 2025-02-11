@@ -3,26 +3,34 @@ package fr.lfavreli.ranking.features.tournaments
 import fr.lfavreli.ranking.features.tournaments.model.TournamentPlayer
 import fr.lfavreli.ranking.repository.LeaderboardRepository
 import fr.lfavreli.ranking.repository.PlayerRepository
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import org.koin.core.annotation.Single
 
-fun updatePlayerScoreHandler(tournamentId: String, playerId: String, newScore: Int, dynamoDbClient: DynamoDbClient): TournamentPlayer? {
-    // 1. Ensure the Tournament exists
-    TournamentUtils.ensureTournamentExists(tournamentId, dynamoDbClient)
+@Single
+class UpdateScoreHandler(
+    private val tournamentValidator: TournamentValidator,
+    private val leaderboardRepository: LeaderboardRepository,
+    private val playerRepository: PlayerRepository
+) {
 
-    // 2. Get current player data
-    val player = PlayerRepository.getById(playerId, dynamoDbClient)
+    fun handle(tournamentId: String, playerId: String, newScore: Int): TournamentPlayer {
+        // 1. Ensure the Tournament exists
+        tournamentValidator.ensureTournamentExists(tournamentId)
 
-    // 3. Update (or insert) the new score in Leaderboard
-    LeaderboardRepository.saveScore(tournamentId, player, newScore, dynamoDbClient)
+        // 2. Get current player data
+        val player = playerRepository.getById(playerId)
 
-    // 4. Recalculate rank
-    val rank = LeaderboardRepository.getPlayerRank(tournamentId, newScore, dynamoDbClient)
+        // 3. Update (or insert) the new score in Leaderboard
+        leaderboardRepository.saveScore(tournamentId, player, newScore)
 
-    // 5. Return the updated TournamentPlayer object
-    return TournamentPlayer(
-        playerId = playerId,
-        displayName = player.displayName,
-        score = newScore,
-        rank = rank
-    )
+        // 4. Recalculate rank
+        val rank = leaderboardRepository.getPlayerRank(tournamentId, newScore)
+
+        // 5. Return the updated TournamentPlayer object
+        return TournamentPlayer(
+            playerId = playerId,
+            displayName = player.displayName,
+            score = newScore,
+            rank = rank
+        )
+    }
 }

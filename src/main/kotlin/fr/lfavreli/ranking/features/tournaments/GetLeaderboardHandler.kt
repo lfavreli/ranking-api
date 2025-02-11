@@ -2,12 +2,18 @@ package fr.lfavreli.ranking.features.tournaments
 
 import fr.lfavreli.ranking.features.tournaments.model.LeaderboardEntry
 import fr.lfavreli.ranking.repository.LeaderboardRepository
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import org.koin.core.annotation.Single
 
-fun getLeaderboardHandler(tournamentId: String, dynamoDbClient: DynamoDbClient): List<LeaderboardEntry> {
-    // 1. Ensure the tournament exists
-    TournamentUtils.ensureTournamentExists(tournamentId, dynamoDbClient)
+@Single
+class GetLeaderboardHandler(
+    private val tournamentValidator: TournamentValidator,
+    private val leaderboardRepository: LeaderboardRepository) {
 
-    // 2. Get leaderboard entries
-    return LeaderboardRepository.getLeaderboard(tournamentId, dynamoDbClient)
+    fun handle(tournamentId: String): List<LeaderboardEntry> {
+        // 1. Ensure the tournament exists
+        tournamentValidator.ensureTournamentExists(tournamentId)
+
+        // 2. Get leaderboard entries
+        return leaderboardRepository.getLeaderboard(tournamentId)
+    }
 }

@@ -2,15 +2,19 @@ package fr.lfavreli.ranking.features.players
 
 import fr.lfavreli.ranking.features.players.model.Player
 import fr.lfavreli.ranking.repository.PlayerRepository
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import org.koin.core.annotation.Single
 
-fun getPlayerByIdHandler(playerId: String, dynamoDbClient: DynamoDbClient): Player {
-    // 1. Retrieve player details from Player table
-    val player = PlayerRepository.getById(playerId, dynamoDbClient)
+@Single
+class GetPlayerByIdHandler(private val playerRepository: PlayerRepository) {
 
-    // 2. Fetch related Tournaments
-    val playerTournaments = PlayerRepository.getParticipatingTournaments(playerId, dynamoDbClient)
+    fun handle(playerId: String): Player {
+        // 1. Retrieve player details from Player table
+        val player = playerRepository.getById(playerId)
 
-    // 3. Return player object with real-time rankings
-    return player.copy(tournaments = playerTournaments)
+        // 2. Fetch related Tournaments
+        val playerTournaments = playerRepository.getParticipatingTournaments(playerId)
+
+        // 3. Return player object with real-time rankings
+        return player.copy(tournaments = playerTournaments)
+    }
 }

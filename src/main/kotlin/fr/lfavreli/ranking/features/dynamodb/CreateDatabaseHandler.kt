@@ -1,77 +1,72 @@
 package fr.lfavreli.ranking.features.dynamodb
 
-import io.ktor.http.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import fr.lfavreli.ranking.repository.DynamoDBRepository
+import org.koin.core.annotation.Single
 import software.amazon.awssdk.services.dynamodb.model.*
 
-suspend fun createTablesHandler(call: RoutingCall, client: DynamoDbClient) {
-    try {
+@Single
+class CreateDatabaseHandler(private val dynamoDBRepository: DynamoDBRepository) {
+
+    fun handle() {
         val createTournamentTableRequest = createTournamentTableRequest()
-        client.createTable(createTournamentTableRequest)
+        dynamoDBRepository.createTable(createTournamentTableRequest)
 
         val createPlayerTableRequest = createPlayerTableRequest()
-        client.createTable(createPlayerTableRequest)
+        dynamoDBRepository.createTable(createPlayerTableRequest)
 
         val createLeaderboardTableRequest = createLeaderboardTableRequest()
-        client.createTable(createLeaderboardTableRequest)
-
-        call.respondText("The database has been initialised!")
-    } catch (e: Exception) {
-        println("Error creating table: ${e.message}")
-        call.respondText("Failed to initialise the database", status = HttpStatusCode.InternalServerError)
+        dynamoDBRepository.createTable(createLeaderboardTableRequest)
     }
-}
 
-private fun createTournamentTableRequest(): CreateTableRequest? {
-    return CreateTableRequest.builder()
-        .tableName(TOURNAMENT_TABLE)
-        .keySchema(KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build())
-        .attributeDefinitions(AttributeDefinition.builder().attributeName(TOURNAMENT_ID).attributeType(ScalarAttributeType.S).build())
-        .billingMode(BillingMode.PAY_PER_REQUEST)
-        .build()
-}
+    private fun createTournamentTableRequest(): CreateTableRequest {
+        return CreateTableRequest.builder()
+            .tableName(TOURNAMENT_TABLE)
+            .keySchema(KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build())
+            .attributeDefinitions(AttributeDefinition.builder().attributeName(TOURNAMENT_ID).attributeType(ScalarAttributeType.S).build())
+            .billingMode(BillingMode.PAY_PER_REQUEST)
+            .build()
+    }
 
-private fun createPlayerTableRequest(): CreateTableRequest? {
-    return CreateTableRequest.builder()
-        .tableName(PLAYER_TABLE)
-        .keySchema(KeySchemaElement.builder().attributeName(PLAYER_ID).keyType(KeyType.HASH).build())
-        .attributeDefinitions(AttributeDefinition.builder().attributeName(PLAYER_ID).attributeType(ScalarAttributeType.S).build())
-        .billingMode(BillingMode.PAY_PER_REQUEST)
-        .build()
-}
+    private fun createPlayerTableRequest(): CreateTableRequest {
+        return CreateTableRequest.builder()
+            .tableName(PLAYER_TABLE)
+            .keySchema(KeySchemaElement.builder().attributeName(PLAYER_ID).keyType(KeyType.HASH).build())
+            .attributeDefinitions(AttributeDefinition.builder().attributeName(PLAYER_ID).attributeType(ScalarAttributeType.S).build())
+            .billingMode(BillingMode.PAY_PER_REQUEST)
+            .build()
+    }
 
-private fun createLeaderboardTableRequest(): CreateTableRequest? {
-    return CreateTableRequest.builder()
-        .tableName(LEADERBOARD_TABLE)
-        .keySchema(
-            listOf(
-                KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
-                KeySchemaElement.builder().attributeName(PLAYER_ID).keyType(KeyType.RANGE).build()
+    private fun createLeaderboardTableRequest(): CreateTableRequest {
+        return CreateTableRequest.builder()
+            .tableName(LEADERBOARD_TABLE)
+            .keySchema(
+                listOf(
+                    KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
+                    KeySchemaElement.builder().attributeName(PLAYER_ID).keyType(KeyType.RANGE).build()
+                )
             )
-        )
-        .attributeDefinitions(
-            listOf(
-                AttributeDefinition.builder().attributeName(TOURNAMENT_ID).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder().attributeName(PLAYER_ID).attributeType(ScalarAttributeType.S).build(),
-                AttributeDefinition.builder().attributeName(LEADERBOARD_SCORE).attributeType(ScalarAttributeType.N).build()
+            .attributeDefinitions(
+                listOf(
+                    AttributeDefinition.builder().attributeName(TOURNAMENT_ID).attributeType(ScalarAttributeType.S).build(),
+                    AttributeDefinition.builder().attributeName(PLAYER_ID).attributeType(ScalarAttributeType.S).build(),
+                    AttributeDefinition.builder().attributeName(LEADERBOARD_SCORE).attributeType(ScalarAttributeType.N).build()
+                )
             )
-        )
-        .globalSecondaryIndexes(
-            listOf(
-                GlobalSecondaryIndex.builder()
-                    .indexName(LEADERBOARD_SCORE_INDEX) // GSI for sorting by score
-                    .keySchema(
-                        listOf(
-                            KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
-                            KeySchemaElement.builder().attributeName(LEADERBOARD_SCORE).keyType(KeyType.RANGE).build()
+            .globalSecondaryIndexes(
+                listOf(
+                    GlobalSecondaryIndex.builder()
+                        .indexName(LEADERBOARD_SCORE_INDEX) // GSI for sorting by score
+                        .keySchema(
+                            listOf(
+                                KeySchemaElement.builder().attributeName(TOURNAMENT_ID).keyType(KeyType.HASH).build(),
+                                KeySchemaElement.builder().attributeName(LEADERBOARD_SCORE).keyType(KeyType.RANGE).build()
+                            )
                         )
-                    )
-                    .projection(Projection.builder().projectionType(ProjectionType.ALL).build()) // Include all attributes in GSI
-                    .build()
+                        .projection(Projection.builder().projectionType(ProjectionType.ALL).build()) // Include all attributes in GSI
+                        .build()
+                )
             )
-        )
-        .billingMode(BillingMode.PAY_PER_REQUEST)
-        .build()
+            .billingMode(BillingMode.PAY_PER_REQUEST)
+            .build()
+    }
 }

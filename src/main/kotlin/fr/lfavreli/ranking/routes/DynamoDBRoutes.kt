@@ -1,17 +1,30 @@
 package fr.lfavreli.ranking.routes
 
-import fr.lfavreli.ranking.features.dynamodb.createTablesHandler
-import fr.lfavreli.ranking.features.dynamodb.deleteTablesHandler
+import fr.lfavreli.ranking.features.dynamodb.CreateDatabaseHandler
+import fr.lfavreli.ranking.features.dynamodb.DeleteDatabaseHandler
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import org.koin.core.annotation.Single
 
-fun Route.DynamoDBRoutes(dynamoDbClient: DynamoDbClient) {
+@Single
+class DynamoDBRoutes(
+    private val createTablesHandler: CreateDatabaseHandler,
+    private val deleteTablesHandler: DeleteDatabaseHandler) {
 
-    route("/db") {
-        // GET /db - Setup database
-        get { createTablesHandler(call, dynamoDbClient) }
+    fun Route.registerRoutes() {
 
-        // DELETE /db - Delete database
-        delete { deleteTablesHandler(call, dynamoDbClient) }
+        route("/db") {
+            // GET /db - Setup database
+            get {
+                createTablesHandler.handle()
+                call.respond(mapOf("message" to "The database has been initialised!"))
+            }
+
+            // DELETE /db - Delete database
+            delete {
+                deleteTablesHandler.handle()
+                call.respond(mapOf("message" to "The database has been removed!"))
+            }
+        }
     }
 }

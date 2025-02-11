@@ -8,6 +8,7 @@ plugins {
     kotlin("plugin.serialization") version "2.1.10"
     id("io.ktor.plugin") version "3.0.3"
     id("org.openapi.generator") version "7.11.0"
+    id("com.google.devtools.ksp") version "2.1.10-1.0.29"
 }
 
 group = "fr.lfavreli.ranking"
@@ -28,6 +29,8 @@ dependencies {
     // Koin dependencies
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")
+    implementation("io.insert-koin:koin-annotations:1.4.0")
+    ksp("io.insert-koin:koin-ksp-compiler:1.4.0")
 
     // Ktor dependencies
     implementation("io.ktor:ktor-server-core-jvm")

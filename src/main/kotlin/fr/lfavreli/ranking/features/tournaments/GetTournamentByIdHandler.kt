@@ -2,9 +2,13 @@ package fr.lfavreli.ranking.features.tournaments
 
 import fr.lfavreli.ranking.features.tournaments.model.Tournament
 import fr.lfavreli.ranking.repository.TournamentRepository
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import org.koin.core.annotation.Single
 
-fun getTournamentByIdHandler(tournamentId: String, dynamoDbClient: DynamoDbClient) : Tournament {
-    // 1. Retrieve player details from Player table
-    return TournamentRepository.getById(tournamentId, dynamoDbClient)
+@Single
+class GetTournamentByIdHandler(private val tournamentRepository: TournamentRepository) {
+
+    fun handle(tournamentId: String) : Tournament {
+        // 1. Retrieve player details from Player table
+        return tournamentRepository.getById(tournamentId)
+    }
 }

@@ -8,11 +8,12 @@ import io.ktor.server.plugins.swagger.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 
 fun Application.configureRouting() {
 
-    val dynamoDbClient : DynamoDbClient by inject()
+    val dynamoDBRoutes by inject<DynamoDBRoutes>()
+    val playerRoutes by inject<PlayerRoutes>()
+    val tournamentRoutes by inject<TournamentRoutes>()
 
     routing {
 
@@ -22,9 +23,9 @@ fun Application.configureRouting() {
 
         route("/api/ranking/v1") {
             swaggerUI(path = "/swagger-ui.html", swaggerFile = "specs/ranking-api.openapi.yml")
-            DynamoDBRoutes(dynamoDbClient)
-            PlayerRoutes(dynamoDbClient)
-            TournamentRoutes(dynamoDbClient)
+            with(dynamoDBRoutes) { registerRoutes() }
+            with(playerRoutes) { registerRoutes() }
+            with(tournamentRoutes) { registerRoutes() }
         }
     }
 }

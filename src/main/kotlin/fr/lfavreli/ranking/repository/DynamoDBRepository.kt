@@ -1,17 +1,32 @@
 package fr.lfavreli.ranking.repository
 
-import fr.lfavreli.ranking.features.dynamodb.LEADERBOARD_TABLE
-import fr.lfavreli.ranking.features.dynamodb.PLAYER_ID
-import fr.lfavreli.ranking.features.dynamodb.TOURNAMENT_ID
+import fr.lfavreli.ranking.exception.InternalServerErrorException
+import org.koin.core.annotation.Single
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 
-object DynamoDBOperations {
+@Single
+class DynamoDBRepository(private val client: DynamoDbClient) {
+
+    fun createTable(createTableRequest: CreateTableRequest) {
+        try {
+            client.createTable(createTableRequest)
+        } catch (e: Exception) {
+            throw InternalServerErrorException("Error creating table!", e)
+        }
+    }
+
+    fun deleteTable(deleteTableRequest: DeleteTableRequest) {
+        try {
+            client.deleteTable(deleteTableRequest)
+        } catch (e: Exception) {
+            throw InternalServerErrorException("Error deleting table!", e)
+        }
+    }
 
     fun getItem(
         tableName: String,
-        key: Map<String, AttributeValue>,
-        client: DynamoDbClient
+        key: Map<String, AttributeValue>
     ): MutableMap<String, AttributeValue> {
         return try {
             client.getItem(
@@ -21,14 +36,13 @@ object DynamoDBOperations {
                     .build()
             ).item()
         } catch (e: Exception) {
-            throw RuntimeException("Error fetching item from $tableName: ${e.message}", e)
+            throw InternalServerErrorException("Error fetching item from $tableName!", e)
         }
     }
 
     fun putItem(
         tableName: String,
-        item: Map<String, AttributeValue>,
-        client: DynamoDbClient
+        item: Map<String, AttributeValue>
     ) {
         try {
             client.putItem(
@@ -38,42 +52,41 @@ object DynamoDBOperations {
                     .build()
             )
         } catch (e: Exception) {
-            throw RuntimeException("Error putting item into $tableName: ${e.message}", e)
+            throw InternalServerErrorException("\"Error putting item into $tableName!", e)
         }
     }
 
     fun deleteItem(
-        tournamentId: String,
-        playerId: String,
-        dynamoDbClient: DynamoDbClient
+        tableName: String,
+        key: Map<String, AttributeValue>? = null
     ) {
         try {
-            val deleteRequest = DeleteItemRequest.builder()
-                .tableName(LEADERBOARD_TABLE)
-                .key(mapOf(
-                    TOURNAMENT_ID to AttributeValue.builder().s(tournamentId).build(),
-                    PLAYER_ID to AttributeValue.builder().s(playerId).build()
-                ))
-                .build()
-            dynamoDbClient.deleteItem(deleteRequest)
+            client.deleteItem(
+                DeleteItemRequest.builder()
+                    .tableName(tableName)
+                    .key(key)
+                    .build()
+            )
         } catch (e: Exception) {
-            throw RuntimeException("Error deleting item from $LEADERBOARD_TABLE: ${e.message}", e)
+            throw InternalServerErrorException("Error deleting item from !", e)
         }
     }
 
     fun scan(
         tableName: String,
-        client: DynamoDbClient,
         filterExpression: String? = null,
         expressionAttributeValues: Map<String, AttributeValue>? = null
     ): List<MutableMap<String, AttributeValue>> {
         return try {
-            val requestBuilder = ScanRequest.builder().tableName(tableName)
-            filterExpression?.let { requestBuilder.filterExpression(it) }
-            expressionAttributeValues?.let { requestBuilder.expressionAttributeValues(it) }
-            client.scan(requestBuilder.build()).items()
+            client.scan(
+                ScanRequest.builder()
+                    .tableName(tableName)
+                    .filterExpression(filterExpression)
+                    .expressionAttributeValues(expressionAttributeValues)
+                    .build()
+            ).items()
         } catch (e: Exception) {
-            throw RuntimeException("Error scanning $tableName: ${e.message}", e)
+            throw InternalServerErrorException("Error scanning $tableName!", e)
         }
     }
 
@@ -82,8 +95,7 @@ object DynamoDBOperations {
         indexName: String? = null,
         keyConditionExpression: String,
         expressionAttributeValues: Map<String, AttributeValue>,
-        scanIndexForward: Boolean = true,
-        client: DynamoDbClient
+        scanIndexForward: Boolean = true
     ): MutableList<MutableMap<String, AttributeValue>> {
         return try {
             client.query(
@@ -96,7 +108,7 @@ object DynamoDBOperations {
                     .build())
                 .items()
         } catch (e: Exception) {
-            throw RuntimeException("Error querying $tableName with key condition expression '$keyConditionExpression': ${e.message}", e)
+            throw InternalServerErrorException("Error querying $tableName with key condition expression '$keyConditionExpression'!", e)
         }
     }
 }

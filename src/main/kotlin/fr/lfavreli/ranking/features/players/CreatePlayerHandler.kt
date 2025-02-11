@@ -3,28 +3,32 @@ package fr.lfavreli.ranking.features.players
 import fr.lfavreli.ranking.features.players.model.CreatePlayerRequest
 import fr.lfavreli.ranking.features.players.model.Player
 import fr.lfavreli.ranking.repository.PlayerRepository
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient
+import org.koin.core.annotation.Single
 import java.time.OffsetDateTime
 import java.util.*
 
-fun createPlayerHandler(request: CreatePlayerRequest, dynamoDbClient: DynamoDbClient) : Player {
-    // 1. Generate player details
-    val player = generatePlayerEntity(request)
+@Single
+class CreatePlayerHandler(private val playerRepository: PlayerRepository) {
 
-    // 2. Save the player in the database
-    PlayerRepository.save(player, dynamoDbClient)
+    fun handle(request: CreatePlayerRequest) : Player {
+        // 1. Generate player details
+        val player = generatePlayerEntity(request)
 
-    return player
-}
+        // 2. Save the player in the database
+        playerRepository.save(player)
 
-private fun generatePlayerEntity(request: CreatePlayerRequest): Player {
-    val playerId = UUID.randomUUID().toString()
-    val lastUpdated = OffsetDateTime.now().toString()
+        return player
+    }
 
-    return Player(
-        playerId = playerId,
-        displayName = request.displayName,
-        tournaments = emptyList(),
-        lastUpdated = lastUpdated
-    )
+    private fun generatePlayerEntity(request: CreatePlayerRequest): Player {
+        val playerId = UUID.randomUUID().toString()
+        val lastUpdated = OffsetDateTime.now().toString()
+
+        return Player(
+            playerId = playerId,
+            displayName = request.displayName,
+            tournaments = emptyList(),
+            lastUpdated = lastUpdated
+        )
+    }
 }
