@@ -1,17 +1,18 @@
-# 🏆 Tournament Ranking API
+# 🏆 Ranking API
 
-A Kotlin-based API for managing players, tournaments, and leaderboards. This project demonstrates my expertise in designing scalable APIs using **Kotlin**, **Ktor**, **Koin**, **DynamoDB**, and **Clean Architecture** principles.
+A Kotlin-based API for managing players, tournaments, and leaderboards.
 
 ## 🚀 Features
 
 - **Player & Tournament Management**: Create and update players and tournaments.
 - **Leaderboard System**: Fetch rankings and retrieve nearby players.
-- **Dependency Injection**: Powered by **Koin** for modular architecture.
-- **OpenAPI/Swagger Documentation**: Available at `/api/ranking/v1/swagger-ui.html`.
-- **Dockerized Environment**: Both the application and **DynamoDB** run in **Docker**.
-- **Hot Reload**: Supports **auto-reload** during development.
-- **Custom Exception Handling**: Proper error handling with **StatusPage**.
+- **Modular Architecture**: Powered by **Koin** for efficient Dependency Injection (DI).
+- **API Documentation**: OpenAPI/Swagger UI available at `/api/ranking/v1/swagger-ui.html`.
+- **Dockerized Setup**: Both the application and **DynamoDB** run in **Docker**.
+- **Hot Reload**: Supports **auto-reload** for development.
+- **Error Handling**: Custom exception handling via **StatusPage**.
 - **Postman Collection**: Available in `/specs` for easy API testing.
+- **Automated DynamoDB Setup**: A bash script in the `/scripts` folder to initialize and reset the database.
 
 ---
 
@@ -19,9 +20,22 @@ A Kotlin-based API for managing players, tournaments, and leaderboards. This pro
 
 Before running the project, ensure you have:
 
-- ✅ [Docker](https://www.docker.com/) installed
+- ✅ [Docker](https://www.docker.com/) installed 
+  - ✅ **Docker Network**: `ranking-api-net` (Required for `docker compose` to work)
+  - ✅ **Docker Volume**: `dynamodb` (Used for local DynamoDB persistence)
 - ✅ [Gradle](https://gradle.org/) installed
 - ✅ [JDK 11+](https://adoptopenjdk.net/) installed
+
+### 🔄 Setup Required Network & Volume
+
+If the network and volume do not exist, create them using:
+
+```sh
+docker network create ranking-api-net
+docker volume create dynamodb
+```
+
+This ensures that users have everything they need to run the application smoothly.
 
 ---
 
@@ -43,8 +57,8 @@ docker compose --profile full up
 ```
 
 ### 📡 Service Ports
-| Service         | Port  |
-|----------------|-------|
+| Service        | Port   |
+|----------------|--------|
 | Application    | `8080` |
 | DynamoDB       | `8000` |
 | DynamoDB Admin | `8001` |
@@ -59,14 +73,15 @@ docker compose --profile full up
 http://localhost:8080/api/ranking/v1/swagger-ui.html
 ```
 
-
 ---
 
 ## ⚠️ Known Limitations
 
 - 🚧 **Partial API Implementation**:
-  - Creating players and updating scores works.
-  - Retrieving leaderboards is functional.
+  - Creating players, tournaments and updating scores works.
+  - Deleting tournament players works.
+  - Retrieving leaderboards, players and tournaments is functional.
+  - Other _endpoints_ have to be implemented.
 
 - 🔗 **Tightly Coupled with DynamoDB**:
   - The current implementation has a strong dependency on **DynamoDB**, which reduces flexibility.
@@ -79,28 +94,35 @@ http://localhost:8080/api/ranking/v1/swagger-ui.html
 
 ---
 
-## 🚀 API Future Improvements
+## 🚀 Future Improvements
 
 ### ✅ Test Coverage
-- 🧪 **Expand unit and integration tests** to improve reliability.
-- 🔍 **Automate API response validation** with Postman test collections.
+- **Expand unit and integration tests** to improve reliability.
+- **Automate API response validation** with Postman test collections.
 
 ### 🔒 Authentication & Security
-- 🔑 **Implement JWT-based authentication** for secured endpoints.
-- 🔐 **Integrate OAuth2 for production environments**.
+- **Integrate Basic Authentication** for Setup & Destroy database endpoints.
+- **Implement JWT-based authentication** for secured endpoints.
 
 ### 📊 Optimization & Performance
-- 🔄 **Introduce pagination** for endpoints returning large datasets.
-- 🏎 **Implement caching** to improve response times for frequently accessed data.
-- 🚦 **Set up rate limiting** to prevent API abuse.
+- **Introduce pagination** for endpoints returning large datasets.
+- **Implement caching** to improve response times for frequently accessed data.
+- **Set up rate limiting** to prevent API abuse.
 
 ### 📡 Observability & Monitoring
-- 📜 **Enable structured logging and request tracing** for better debugging.
-- 📊 **Integrate an APM (Application Performance Monitoring) tool** to track performance and detect bottlenecks.
+- **Enable structured logging and request tracing** for better debugging.
+- **Integrate an Application Performance Monitoring (APM) tool** to track performance and detect bottlenecks.
 
 ### 💡 Other Enhancements
-- 🏥 **Add health-check endpoints** (liveness and readiness probes).
-- 🔄 **Set up a CI/CD pipeline** with GitHub Actions for automated testing and deployments.
-- 🏆 **Improve leaderboard logic**:
+- **Add health-check endpoints** (liveness and readiness probes).
+- **Set up a CI/CD pipeline** with GitHub Actions for automated testing and deployments.
+- **Improve leaderboard logic**:
   - Properly handle **tie-breaking scenarios**.
   - Add **sorting options** for rankings.
+
+---
+
+## 📬 Contact
+
+📧 Loïc FAVRELIERE - [LinkedIn](https://www.linkedin.com/in/loic-favreliere/) <br/>
+🐙 GitHub - [@lfavreli](https://github.com/lfavreli)
