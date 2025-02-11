@@ -48,7 +48,7 @@ dependencies {
     implementation("org.openapitools:openapi-generator-gradle-plugin:7.11.0")
 
     // Test dependencies
-    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("io.ktor:ktor-server-test-host-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
