@@ -23,30 +23,7 @@ Livrable :
 * instruction pour lancer le service
 * liste du "reste à faire" pour un déploiement en production serein
 
-## Do not forget
-
-+ Versionning dans l'URL
-+ base_path = /api
-+ Swagger
-+ Unit testing
-* Integration testing
-
-+ Authentication (API Key)
-+ Login
-+ Analytics 
-
-+ Pagination
-+ Caching
-+ Rate-limit
-+ Health-check
-
-+ Handle tie 
-+ Friend Leaderboard
-+ Is user eliminated ?
-+ Add sorting tournaments list on GET /players (default 'lastUpdated' ; but may be sortBy=latestTournament|earliestTournament)
-
------------
-
+## Conception technique
 
 Prefix/BasePath : /api/ranking/v1
 
