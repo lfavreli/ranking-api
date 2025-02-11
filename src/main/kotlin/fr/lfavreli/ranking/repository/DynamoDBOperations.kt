@@ -1,5 +1,8 @@
 package fr.lfavreli.ranking.repository
 
+import fr.lfavreli.ranking.features.dynamodb.LEADERBOARD_TABLE
+import fr.lfavreli.ranking.features.dynamodb.PLAYER_ID
+import fr.lfavreli.ranking.features.dynamodb.TOURNAMENT_ID
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.*
 
@@ -36,6 +39,25 @@ object DynamoDBOperations {
             )
         } catch (e: Exception) {
             throw RuntimeException("Error putting item into $tableName: ${e.message}", e)
+        }
+    }
+
+    fun deleteItem(
+        tournamentId: String,
+        playerId: String,
+        dynamoDbClient: DynamoDbClient
+    ) {
+        try {
+            val deleteRequest = DeleteItemRequest.builder()
+                .tableName(LEADERBOARD_TABLE)
+                .key(mapOf(
+                    TOURNAMENT_ID to AttributeValue.builder().s(tournamentId).build(),
+                    PLAYER_ID to AttributeValue.builder().s(playerId).build()
+                ))
+                .build()
+            dynamoDbClient.deleteItem(deleteRequest)
+        } catch (e: Exception) {
+            throw RuntimeException("Error deleting item from $LEADERBOARD_TABLE: ${e.message}", e)
         }
     }
 

@@ -5,8 +5,6 @@ import fr.lfavreli.ranking.features.players.model.Player
 import fr.lfavreli.ranking.features.tournaments.model.LeaderboardEntry
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
-import software.amazon.awssdk.services.dynamodb.model.QueryRequest
 
 object LeaderboardRepository {
 
@@ -39,7 +37,24 @@ object LeaderboardRepository {
     }
 
     fun getLeaderboard(tournamentId: String, dynamoDbClient: DynamoDbClient): List<LeaderboardEntry> {
-        val leaderboardResult = DynamoDBOperations.query(
+        val leaderboardEntries = getLeaderboardEntries(tournamentId, dynamoDbClient)
+        return leaderboardEntries.mapIndexedNotNull { index, item ->
+            LeaderboardEntry.fromDynamoDbItem(item, index + 1)
+        }
+    }
+
+    fun deleteTournamentPlayers(tournamentId: String, dynamoDbClient: DynamoDbClient) {
+        val leaderboardEntries = getLeaderboardEntries(tournamentId, dynamoDbClient)
+
+        // Delete each leaderboard entry
+        leaderboardEntries.forEach { item ->
+            val playerId = item[PLAYER_ID]?.s() ?: return@forEach
+            DynamoDBOperations.deleteItem(tournamentId, playerId, dynamoDbClient)
+        }
+    }
+
+    private fun getLeaderboardEntries(tournamentId: String, dynamoDbClient: DynamoDbClient): MutableList<MutableMap<String, AttributeValue>> {
+        return DynamoDBOperations.query(
             tableName = LEADERBOARD_TABLE,
             indexName = LEADERBOARD_SCORE_INDEX,
             keyConditionExpression = "$TOURNAMENT_ID = :tournamentId",
@@ -47,36 +62,5 @@ object LeaderboardRepository {
             scanIndexForward = false, // Ensures scores are sorted from highest to lowest
             client = dynamoDbClient
         )
-        return leaderboardResult.mapIndexedNotNull { index, item ->
-            LeaderboardEntry.fromDynamoDbItem(item, index + 1)
-        }
-    }
-
-    fun deleteTournamentPlayers(tournamentId: String, dynamoDbClient: DynamoDbClient) {
-        // Query to get all leaderboard entries for the tournament
-        val queryRequest = QueryRequest.builder()
-            .tableName(LEADERBOARD_TABLE)
-            .keyConditionExpression("$TOURNAMENT_ID = :tournamentId")
-            .expressionAttributeValues(
-                mapOf(":tournamentId" to AttributeValue.builder().s(tournamentId).build())
-            )
-            .build()
-
-        val leaderboardEntries = dynamoDbClient.query(queryRequest).items()
-
-        // Delete each leaderboard entry
-        leaderboardEntries.forEach { item ->
-            val playerId = item["playerId"]?.s() ?: return@forEach
-            val deleteRequest = DeleteItemRequest.builder()
-                .tableName(LEADERBOARD_TABLE)
-                .key(
-                    mapOf(
-                        TOURNAMENT_ID to AttributeValue.builder().s(tournamentId).build(),
-                        "playerId" to AttributeValue.builder().s(playerId).build()
-                    )
-                )
-                .build()
-            dynamoDbClient.deleteItem(deleteRequest)
-        }
     }
 }
