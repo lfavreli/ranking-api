@@ -1,0 +1,417 @@
+{
+	"info": {
+		"_postman_id": "2777700e-83f0-4d4a-a950-967155c8467b",
+		"name": "BETCLIC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "365045"
+	},
+	"item": [
+		{
+			"name": "API Ranking",
+			"item": [
+				{
+					"name": "DynamoDB",
+					"item": [
+						{
+							"name": "GET /db - Setup Database",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/db",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"db"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE /db - Delete Database",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/db",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"db"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Players",
+					"item": [
+						{
+							"name": "POST /players - Create a Player",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"displayName\": \"XxRamboxX\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/players",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"players"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /players/:playerId - Get Player by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/players/:playerId",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"players",
+										":playerId"
+									],
+									"variable": [
+										{
+											"key": "playerId",
+											"value": "9d3cf850-0869-4886-95fa-b9c8e0d4f081"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /players - Get all Players",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/players/:playerId",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"players",
+										":playerId"
+									],
+									"variable": [
+										{
+											"key": "playerId",
+											"value": "630d0db6-7480-411a-9d1a-9c7a0c739739"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PUT /players/:playerId - Update a Player",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/players/:playerId",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"players",
+										":playerId"
+									],
+									"variable": [
+										{
+											"key": "playerId",
+											"value": "517deb59-542f-43ab-ba29-f13ecabedd8b"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Tournaments",
+					"item": [
+						{
+							"name": "POST /tournaments - Create a Tournament",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"description\": \"Tournament 1\",\r\n  \"order\": \"LARGER_IS_BETTER\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /tournaments - Get all Tournaments",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /tournaments/:tournamentId - Get Tournament by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments/:tournamentId",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments",
+										":tournamentId"
+									],
+									"variable": [
+										{
+											"key": "tournamentId",
+											"value": "00e92ea4-84c7-40ef-80a2-f795ca1c7c61"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GET /tournaments/:tournamentId/leaderboard - Get Leaderboard",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments/:tournamentId/leaderboard",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments",
+										":tournamentId",
+										"leaderboard"
+									],
+									"variable": [
+										{
+											"key": "tournamentId",
+											"value": "4434640d-a13d-4353-a677-767182aeeda0"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE /tournaments/:tournamentId - Delete Tournament by ID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments/:tournamentId",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments",
+										":tournamentId"
+									],
+									"variable": [
+										{
+											"key": "tournamentId",
+											"value": "00e92ea4-84c7-40ef-80a2-f795ca1c7c61"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PATCH /tournaments/:tournamentId/players/:playerId/score - Patch Player score in a Tournament",
+							"request": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"newScore\":  0\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments/:tournamentId/players/:playerId/score",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments",
+										":tournamentId",
+										"players",
+										":playerId",
+										"score"
+									],
+									"variable": [
+										{
+											"key": "tournamentId",
+											"value": "a3262566-ca61-45c9-9bdd-bcad695ded83"
+										},
+										{
+											"key": "playerId",
+											"value": "dd496a5e-6fec-4287-a037-ee109836ec33"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DELETE /tournaments/:tournamentId/players - Delete Tournament Players",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/api/ranking/v1/tournaments/:tournamentId/players",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"api",
+										"ranking",
+										"v1",
+										"tournaments",
+										":tournamentId",
+										"players"
+									],
+									"variable": [
+										{
+											"key": "tournamentId",
+											"value": "00e92ea4-84c7-40ef-80a2-f795ca1c7c61"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}
