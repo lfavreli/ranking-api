@@ -1,7 +1,5 @@
-package fr.lfavreli.ranking.fr.lfavreli.ranking
+package fr.lfavreli.ranking
 
-import fr.lfavreli.ranking.configureFrameworks
-import fr.lfavreli.ranking.configureRouting
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
